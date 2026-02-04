@@ -9,7 +9,7 @@ A macOS menubar app for monitoring Netlify and Vercel deployments.
 
 > **Last Updated:** 2026-02-04
 > **Status:** Development (functional, not released)
-> **Domain:** useshipshape.com (recommended)
+> **Domain:** shipshape.it ("Ship it!")
 
 ### What's Working
 

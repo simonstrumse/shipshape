@@ -37,9 +37,9 @@
 ### Domain Strategy
 | Priority | Domain | Status |
 |----------|--------|--------|
-| 1 | **useshipshape.com** | Likely available |
-| 2 | shipshape.app | Check availability |
-| 3 | getshipshape.dev | Fallback |
+| 1 | **shipshape.it** | ✅ Available — "Ship it!" developer phrase |
+| 2 | getshipshape.app | Fallback |
+| 3 | shipshape.app | Fallback |
 
 ### Visual Identity
 - **Icon concept:** Small ship with colored flag (green/yellow/red)
@@ -51,7 +51,7 @@
 ## Launch Strategy
 
 ### Phase 1: Soft Launch (Week 1-2)
-- [ ] Register domain (useshipshape.com)
+- [ ] Register domain (shipshape.it)
 - [ ] Create simple landing page
 - [ ] GitHub release (open source or binary)
 - [ ] Share on Twitter/X with demo GIF
