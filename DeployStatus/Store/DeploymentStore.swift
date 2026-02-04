@@ -38,6 +38,23 @@ final class DeploymentStore {
     private(set) var lastUpdated: Date?
     private(set) var error: Error?
 
+    /// Demo mode shows sample data instead of real accounts
+    var isDemoMode: Bool {
+        get { UserDefaults.standard.bool(forKey: Constants.UserDefaultsKeys.demoMode) }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Constants.UserDefaultsKeys.demoMode)
+            if newValue {
+                loadDemoData()
+            } else {
+                // Clear demo data, reload real accounts
+                projects.removeAll()
+                accounts.removeAll()
+                loadAccounts()
+                Task { await refresh() }
+            }
+        }
+    }
+
     // MARK: - Services
 
     private let vercelService = VercelService()
@@ -113,7 +130,193 @@ final class DeploymentStore {
     // MARK: - Initialization
 
     init() {
-        loadAccounts()
+        if isDemoMode {
+            loadDemoData()
+        } else {
+            loadAccounts()
+        }
+    }
+
+    // MARK: - Demo Mode
+
+    /// Load sample demo data for screenshots/videos
+    private func loadDemoData() {
+        let demoAccountId = UUID()
+
+        // Demo accounts
+        accounts = [
+            Account(id: demoAccountId, service: .vercel, name: "Demo Vercel"),
+            Account(id: UUID(), service: .netlify, name: "Demo Netlify")
+        ]
+
+        let now = Date()
+
+        // Demo projects with various states
+        projects = [
+            // Building project (Vercel)
+            Project(
+                id: "prj_building",
+                accountId: demoAccountId,
+                service: .vercel,
+                name: "acme-website",
+                url: "https://acme-website.vercel.app",
+                adminUrl: "https://vercel.com/demo/acme-website",
+                framework: "Next.js",
+                deployments: [
+                    Deployment(
+                        id: "dpl_building",
+                        projectId: "prj_building",
+                        service: .vercel,
+                        status: .building,
+                        url: nil,
+                        adminUrl: "https://vercel.com/demo/acme-website/deployments/dpl_building",
+                        createdAt: now.addingTimeInterval(-45),
+                        readyAt: nil,
+                        branch: "main",
+                        commitMessage: "feat: add new landing page",
+                        commitSha: "a1b2c3d4e5f6789",
+                        errorMessage: nil
+                    )
+                ]
+            ),
+
+            // Recently succeeded (Vercel)
+            Project(
+                id: "prj_docs",
+                accountId: demoAccountId,
+                service: .vercel,
+                name: "docs-site",
+                url: "https://docs.acme.dev",
+                adminUrl: "https://vercel.com/demo/docs-site",
+                framework: "Astro",
+                deployments: [
+                    Deployment(
+                        id: "dpl_docs",
+                        projectId: "prj_docs",
+                        service: .vercel,
+                        status: .ready,
+                        url: "https://docs-abc123.vercel.app",
+                        adminUrl: "https://vercel.com/demo/docs-site/deployments/dpl_docs",
+                        createdAt: now.addingTimeInterval(-600),
+                        readyAt: now.addingTimeInterval(-510),
+                        branch: "main",
+                        commitMessage: "docs: update API reference",
+                        commitSha: "f1e2d3c4b5a6789",
+                        errorMessage: nil
+                    )
+                ]
+            ),
+
+            // Queued (Netlify)
+            Project(
+                id: "prj_blog",
+                accountId: demoAccountId,
+                service: .netlify,
+                name: "company-blog",
+                url: "https://blog.acme.dev",
+                adminUrl: "https://app.netlify.com/sites/company-blog",
+                framework: "Gatsby",
+                deployments: [
+                    Deployment(
+                        id: "dpl_blog",
+                        projectId: "prj_blog",
+                        service: .netlify,
+                        status: .queued,
+                        url: nil,
+                        adminUrl: "https://app.netlify.com/sites/company-blog/deploys/dpl_blog",
+                        createdAt: now.addingTimeInterval(-10),
+                        readyAt: nil,
+                        branch: "main",
+                        commitMessage: "post: weekly update",
+                        commitSha: "9876543210abcdef",
+                        errorMessage: nil
+                    )
+                ]
+            ),
+
+            // Error state (for demo variety)
+            Project(
+                id: "prj_api",
+                accountId: demoAccountId,
+                service: .vercel,
+                name: "api-server",
+                url: "https://api.acme.dev",
+                adminUrl: "https://vercel.com/demo/api-server",
+                framework: "Node.js",
+                deployments: [
+                    Deployment(
+                        id: "dpl_api",
+                        projectId: "prj_api",
+                        service: .vercel,
+                        status: .error,
+                        url: nil,
+                        adminUrl: "https://vercel.com/demo/api-server/deployments/dpl_api",
+                        createdAt: now.addingTimeInterval(-1800),
+                        readyAt: nil,
+                        branch: "feature/auth",
+                        commitMessage: "wip: oauth integration",
+                        commitSha: "deadbeef12345678",
+                        errorMessage: "Build failed: Missing env variable"
+                    )
+                ]
+            ),
+
+            // Skipped monorepo build
+            Project(
+                id: "prj_admin",
+                accountId: demoAccountId,
+                service: .vercel,
+                name: "admin-dashboard",
+                url: "https://admin.acme.dev",
+                adminUrl: "https://vercel.com/demo/admin-dashboard",
+                framework: "React",
+                deployments: [
+                    Deployment(
+                        id: "dpl_admin",
+                        projectId: "prj_admin",
+                        service: .vercel,
+                        status: .skipped,
+                        url: nil,
+                        adminUrl: "https://vercel.com/demo/admin-dashboard/deployments/dpl_admin",
+                        createdAt: now.addingTimeInterval(-300),
+                        readyAt: nil,
+                        branch: "main",
+                        commitMessage: "chore: update deps (no changes)",
+                        commitSha: "cafe123456789abc",
+                        errorMessage: nil
+                    )
+                ]
+            ),
+
+            // Ready Netlify site
+            Project(
+                id: "prj_landing",
+                accountId: demoAccountId,
+                service: .netlify,
+                name: "landing-page",
+                url: "https://acme.dev",
+                adminUrl: "https://app.netlify.com/sites/landing-page",
+                framework: "HTML",
+                deployments: [
+                    Deployment(
+                        id: "dpl_landing",
+                        projectId: "prj_landing",
+                        service: .netlify,
+                        status: .ready,
+                        url: "https://landing-page--deploy-preview.netlify.app",
+                        adminUrl: "https://app.netlify.com/sites/landing-page/deploys/dpl_landing",
+                        createdAt: now.addingTimeInterval(-7200),
+                        readyAt: now.addingTimeInterval(-7100),
+                        branch: "main",
+                        commitMessage: "style: hero section redesign",
+                        commitSha: "babe456789abcdef",
+                        errorMessage: nil
+                    )
+                ]
+            )
+        ]
+
+        lastUpdated = now
     }
 
     // MARK: - Account Management

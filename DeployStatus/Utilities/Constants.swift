@@ -34,6 +34,7 @@ enum Constants {
         static let notifyOnBuildStart = "deploystatus.notifyOnBuildStart"
         static let notifyOnBuildSuccess = "deploystatus.notifyOnBuildSuccess"
         static let notifyOnBuildFailure = "deploystatus.notifyOnBuildFailure"
+        static let demoMode = "deploystatus.demoMode"
     }
 
     /// Number of deployments to fetch per project

@@ -3,10 +3,13 @@ import ServiceManagement
 
 /// Settings view for general app preferences
 struct GeneralSettingsView: View {
+    @Environment(DeploymentStore.self) private var store
     @State private var launchAtLogin = false
     @State private var pollingInterval: PollingInterval = .medium
 
     var body: some View {
+        @Bindable var store = store
+
         VStack(alignment: .leading, spacing: 16) {
             Text("General")
                 .font(.headline)
@@ -16,6 +19,12 @@ struct GeneralSettingsView: View {
                 .onChange(of: launchAtLogin) { _, newValue in
                     setLaunchAtLogin(newValue)
                 }
+
+            // Demo mode toggle
+            Toggle("Demo Mode", isOn: $store.isDemoMode)
+            Text("Show sample data instead of real accounts (for screenshots/videos)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
             Divider()
 
@@ -66,7 +75,7 @@ struct GeneralSettingsView: View {
             // Links
             HStack {
                 Button("GitHub") {
-                    if let url = URL(string: "https://github.com/yourusername/Shipshape") {
+                    if let url = URL(string: "https://github.com/simonstrumse/shipshape") {
                         NSWorkspace.shared.open(url)
                     }
                 }
@@ -75,7 +84,7 @@ struct GeneralSettingsView: View {
                 Spacer()
 
                 Button("Report Issue") {
-                    if let url = URL(string: "https://github.com/yourusername/Shipshape/issues") {
+                    if let url = URL(string: "https://github.com/simonstrumse/shipshape/issues") {
                         NSWorkspace.shared.open(url)
                     }
                 }
