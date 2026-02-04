@@ -16,6 +16,7 @@ xcuserdata/
 
 # Build
 build/
+dist/
 *.ipa
 *.dSYM.zip
 *.dSYM
