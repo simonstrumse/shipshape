@@ -8,6 +8,10 @@ A native macOS menubar app for monitoring Netlify and Vercel deployments in real
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange?logo=swift)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+<p align="center">
+  <img src="screenshots/product-demo.gif" alt="Shipshape Demo" width="600">
+</p>
+
 ---
 
 ## Why Shipshape?
